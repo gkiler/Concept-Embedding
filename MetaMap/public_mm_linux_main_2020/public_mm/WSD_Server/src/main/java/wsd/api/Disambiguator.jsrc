@@ -1,0 +1,308 @@
+package wsd.api;
+
+import java.io.StringReader;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Vector;
+
+import org.apache.log4j.Logger;
+
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.Namespace;
+import org.jdom.input.SAXBuilder;
+
+import wsd.methods.DisambiguationMethod;
+import wsd.model.PreferredNameVector;
+import wsd.model.Result;
+
+import wsd.server.Arbitrator;
+
+import wsd.WSDEnvironment;
+
+import se.sics.jasper.Term;
+import se.sics.jasper.SICStus;
+import se.sics.jasper.SPException;
+import se.sics.jasper.SPTerm;
+
+/**
+ * WSD service library
+ *
+ *
+ * Created: Tue Dec 28 13:34:20 2010
+ *
+ * @author <a href="mailto:wrogers@nlm.nih.gov">Willie Rogers</a>
+ * @version 1.0
+ */
+public class Disambiguator {
+
+  /** the list of methods. */
+  private String[] fMethods;
+  /** the list of weights. */
+  private double[] fWeights;
+  /** methods to use for request */
+  private List requestedMethods = new ArrayList(10);
+  /** logger */
+  private static Logger logger = Logger.getLogger(Disambiguator.class);
+
+  /** SICStus Prolog interpreter instance */
+  SICStus sp;
+
+  /**
+   * Creates a new <code>Disambiguator</code> instance.
+   *
+   */
+  public Disambiguator()
+    throws se.sics.jasper.SPException
+  {
+    try {
+      WSDEnvironment.initialize();
+      /* initialize the requested methods array */
+      // this.requestedMethods = new ArrayList(10);
+      if (null == (sp = SICStus.getCaller())) {
+	sp = new SICStus();
+      }
+      logger.debug("SICStus jasper initialized: " + sp);
+    } catch (Exception e) {
+      logger.error("Disambuator failed.");
+      System.err.println("Disambuator failed.");
+      e.printStackTrace(System.err);
+      // System.exit(0);
+    }
+  }
+
+  public static String testStatic (String entireText) {
+    logger.debug("static method, arg: " + entireText);
+    return entireText + "foo testStatic";
+  }
+
+  public String testInstance (String entireText) {
+    logger.debug("instance method, arg: " + entireText);
+    return entireText + "foo testInstance";
+  }
+  
+  public String disambiguate (String entireText)
+  {
+    logger.debug("entireText: " + entireText);
+    StringBuffer outputLine = new StringBuffer();
+    StringReader reader = null;
+
+    List results = new Vector();
+    List resultsToArbitrator = new Vector();
+    PreferredNameVector arbitrationResults = null;    
+
+    try {
+      reader = new StringReader(entireText.toString());
+      SAXBuilder builder = new SAXBuilder(false);
+      Document doc = builder.build(reader);
+      logger.debug("Built the XML tree.");
+      Element root = doc.getRootElement();
+      Namespace ns = root.getNamespace();
+
+      /* calculate methods and weights */
+      calculateMethodWeights(root.getChild("methods"),ns);
+
+      // determine the disambiguation methods to run. Add
+      // requested methods to list.
+      for (int i =0; i < fMethods.length; i ++)
+	{
+	  if (WSDEnvironment.fAvailableMethods.containsKey(fMethods[i]))
+	    {
+	      this.requestedMethods.add(fMethods[i]);
+	    }
+	  else
+	    {
+	      logger.error("Cannot find the method: " + fMethods[i]);
+	    }
+	}
+      logger.debug("Determined the methods and weights.");
+      // call the requested methods and perform disambiguation.
+      ListIterator methodIterator = this.requestedMethods.listIterator();
+      while (methodIterator.hasNext()) {
+	String methodName = (String)methodIterator.next();
+	List methodResults = getMatchFromMethod(methodName, doc);
+	ListIterator methodResultsIter = methodResults.listIterator();
+	while (methodResultsIter.hasNext()) {
+	  Result res = (Result)methodResultsIter.next();
+	  res.setMethodName(methodName);
+	}
+	logger.debug("Completed disambiguation with " + methodName);
+	if (methodResults != null)
+	  results.add(methodResults);
+	else
+	  logger.debug(methodName + " did not return any answers.");
+      }
+
+      // read the disambiguation results and for each ambiguity,
+      // create a list of answers and send them to arbitrator.
+      int k=0;
+      if (results.size() ==  0)
+	{
+	  logger.warn("Result list is empty!");
+	  outputLine.append("Result list is empty!");
+	}
+      else
+	{
+	  String errorCondition = null;
+	  while (k < ((List)results.get(0)).size())
+	    {
+	      for (int j=0; j < results.size(); j++)
+		{
+		  Result res = (Result)((List)results.get(j)).get(k);
+
+		  /*check to see if there are any errors in the results,
+		    The result should probably be modified to mark errors*/
+		  if (res != null) {
+		    if ((List)res.getPreferredConceptNames() != null) {
+		      if (((List)res.getPreferredConceptNames()).size() > 0) {
+			if ((String)res.getPreferredConceptNames().get(0) != null && 
+			    ((String)res.getPreferredConceptNames().get(0)).startsWith("[Error")) {
+			  errorCondition = (String)res.getPreferredConceptNames().get(0);
+			}
+		      }
+		      resultsToArbitrator.add(res);
+		    }
+		  }
+		}
+	      // add the static part of the disambiation output
+	      outputLine.append(((Result)resultsToArbitrator.get(0)).getUi() + "|");
+	      outputLine.append(((Result)resultsToArbitrator.get(0)).getUtterancePos() + "|");
+	      outputLine.append(((Result)resultsToArbitrator.get(0)).getPhrasePos() + "|");
+	      PreferredNameVector candidates =
+		new PreferredNameVector(((Result)resultsToArbitrator.get(0)).getCandidatePreferredConceptNames());
+	      outputLine.append(candidates.convertToString() + "|");
+
+	      if (errorCondition == null) {
+		// perform arbitration and write the output
+		arbitrationResults = new PreferredNameVector(arbitrate(resultsToArbitrator));
+		if (arbitrationResults.size() == 0)
+		  outputLine.append("[No match found.]|\n");
+		else
+		  outputLine.append(arbitrationResults.convertToString() + "|\n");
+	      } else {
+		outputLine.append(errorCondition + "|\n");
+	      }
+
+	      resultsToArbitrator.clear();
+	      k++;
+	    }
+	  results.clear();
+
+	  //write the output to the socket
+	  if (logger.isDebugEnabled()) logger.debug("Output to return: " + outputLine.toString());
+	  logger.debug("disambigator finished");
+	  logger.debug("Finished processing");
+	}
+      return "<Response>" + outputLine.toString() + "</Response>\n";
+    } catch (NullPointerException npe) {
+      logger.fatal(npe.getMessage(), npe);
+    } catch (JDOMException jde) {
+      logger.fatal(jde.getMessage(), jde);
+    }
+    return "<Response>No processing done.</Response>\n";
+  }
+
+
+  /**
+   * Reads the method names and their weights from the DOM tree.
+   *
+   * @param methodsNode "methods" node of the ambiguity DOM tree.
+   * @param ns          the default namespace.
+   */
+  private void calculateMethodWeights(Element methodsNode, Namespace ns)
+  {
+      List methodNames = new Vector();
+      List weights = new Vector();
+
+      List methodList = methodsNode.getChildren("method", ns);
+      ListIterator  methodIterator = methodList.listIterator();
+      org.jdom.output.XMLOutputter xmlOutputter = new org.jdom.output.XMLOutputter();
+      while (methodIterator.hasNext())
+      {
+          Element method = (Element)methodIterator.next();
+	  if (method.getAttributeValue("method_name",ns) != null &&
+	      method.getAttributeValue("weight",ns) != null) {
+              if (logger.isDebugEnabled())
+			logger.debug("Method name: " + method.getAttributeValue("method_name",ns));
+              if (logger.isDebugEnabled())
+			logger.debug("Method weight: " + method.getAttributeValue("weight",ns));
+	      methodNames.add(method.getAttributeValue("method_name",ns));
+	      weights.add(Double.valueOf(method.getAttributeValue("weight",ns)));
+	  }
+      }
+
+      double[] weightArray = new double[weights.size()];
+      String[] methodArray = new String[methodNames.size()];
+      for (int i = 0; i < methodNames.size(); i++)
+      {
+          weightArray[i] = ((Double)weights.get(i)).doubleValue();
+          methodArray[i] = (String)methodNames.get(i);
+      }
+      fMethods = methodArray;
+      fWeights = weightArray;
+  }
+
+  /**
+   * Calls a requested disambiguation Method and returns the results from that
+   * method.
+   *
+   * @param methodName  name of disambiguation method to apply.
+   * @param doc         the XML Document that contains the ambiguity data.
+   *
+   * @return a List of Result objects that represent the best matches for each
+   *         ambiguity in the XML Dcocument from the disambiguation method
+   */
+  private List getMatchFromMethod(String methodName, Document doc)
+  {
+    List resultsFromDisambMethod = new Vector();
+    String className = (String)WSDEnvironment.fAvailableMethods.get(methodName);
+    try
+    {
+      Class disambiguationMethodClass = Class.forName(className);
+      DisambiguationMethod method = (DisambiguationMethod)disambiguationMethodClass.newInstance();
+      if (logger.isDebugEnabled()) logger.debug("Calling " + methodName);
+      resultsFromDisambMethod = method.getMatch(doc);
+      if (resultsFromDisambMethod == null) {
+        return null;
+      }
+      ListIterator resultIterator = resultsFromDisambMethod.listIterator();
+      while (resultIterator.hasNext())
+      {
+          Result res = (Result)resultIterator.next();
+          res.setMethodName(methodName);
+          logger.debug("Result: " + res.toString());
+      }
+    } catch (java.lang.ClassNotFoundException exception) {
+      logger.error("Class " + className +  " not found!");
+      exception.printStackTrace(System.err);
+    } catch (java.lang.InstantiationException exception) {
+      logger.error("Unable to instantiate Class " + className);
+      exception.printStackTrace(System.err);
+    } catch (java.lang.IllegalAccessException exception) {
+      logger.error("Illegal access of Class " + className);
+      exception.printStackTrace(System.err);
+    }
+    return resultsFromDisambMethod;
+  }
+
+  /**
+   * Sends the results received from the disambiguation methods to the Arbitrator
+   * to find the best match among a list of concepts. Uses disambiguation method
+   * weights.
+   *
+   * @param results a Result vector with method name and concepts returned from
+   *                the method.
+   *
+   * @return a List of the highest scored concepts.
+   *
+   */
+  private List arbitrate(List results)
+  {
+      return (new Arbitrator()).arbitrate(results, fMethods, fWeights);
+  }
+
+}

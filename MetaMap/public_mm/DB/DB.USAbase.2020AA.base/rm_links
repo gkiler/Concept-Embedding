@@ -1,0 +1,65 @@
+#!/bin/csh
+# Remove links to the original database data files
+
+
+# Remove MetaWordIndex files
+
+/bin/rm -f all_words.txt
+/bin/rm -f all_words_WIDE.txt
+/bin/rm -f all_words_counts.txt
+/bin/rm -f cui_concept.txt
+/bin/rm -f concept_cui.txt
+/bin/rm -f concept_st.txt
+/bin/rm -f cui_st.txt
+/bin/rm -f cui_src.txt
+/bin/rm -f cui_srcs_sts.txt
+/bin/rm -f cui_sourceinfo.txt
+/bin/rm -f first_words.txt
+/bin/rm -f first_words_WIDE.txt
+/bin/rm -f first_words_counts.txt
+/bin/rm -f first_wordsb.txt
+/bin/rm -f first_wordsb_WIDE.txt
+/bin/rm -f first_wordsb_counts.txt
+/bin/rm -f first_words_of_one.txt
+/bin/rm -f first_words_of_one_WIDE.txt
+/bin/rm -f first_words_of_two.txt
+/bin/rm -f first_words_of_two_WIDE.txt
+/bin/rm -f sui_cui.txt
+/bin/rm -f sui_nmstr_str.txt
+
+# Remove MeSHTreeCodes files
+
+/bin/rm -f mesh_mh_opt.txt
+/bin/rm -f mesh_tc_strict.txt
+/bin/rm -f mesh_tc_relaxed.txt
+/bin/rm -f meta_mesh_opt.txt
+/bin/rm -f meta_mesh_tc_opt.txt
+
+# Remove NLSAbbAcros files
+/bin/rm -f nls_aa.txt
+/bin/rm -f nls_aau.txt
+
+# Remove Synonyms files
+
+/bin/rm -f syns.txt
+
+# Remove Variants files
+
+/bin/rm -f vars.txt
+/bin/rm -f varsan.txt
+/bin/rm -f varsanu.txt
+/bin/rm -f varsu.txt
+
+# Remove SAB files
+
+/bin/rm -f sab_rv.txt
+/bin/rm -f sab_vr.txt
+
+# Remove Lexicon files
+
+/bin/rm -f dm_vars.txt
+/bin/rm -f im_vars.txt
+/bin/rm -f lex_form.txt
+/bin/rm -f lex_rec.txt
+/bin/rm -f norm_prefix.txt
+

@@ -1,0 +1,39 @@
+TY  - JOUR
+DB  - PubMed
+AU  - Signorello, L B
+AU  - Kennedy, J A
+AU  - Richmond, R A
+AU  - Sieu, K L
+AU  - Blot, W J
+AU  - Harrison, D C
+T1  - Self-reported quality of life and health among Björk-Shiley convexo-concave prosthetic heart valve patients
+LA  - eng
+SN  - 0966-8519
+Y1  - 2001/03/
+AB  - BACKGROUND AND AIM OF THE STUDY: The risk of fracture of Björk-Shiley convexo-concave (BSCC) prosthetic heart valves has resulted in consideration of prophylactic explantation and replacement for patients with high-risk valves. Little information exists on perceived quality of life, health status, and serious morbidity among BSCC patients, including those who have undergone explantation. METHODS: Self-administered questionnaires were completed by a cohort of 585 BSCC patients who participated in an X-ray imaging study to detect precursors to valve fracture up to seven years (average 3.9 years) previously. Responses from 31 explant patients were contrasted with those from 554 BSCC patients in whom explant surgery was not attempted. RESULTS: Perceived quality of life and health status and risk of hospitalization after participating in the imaging study varied considerably among patients, but on average tended not to differ significantly between those with and without explants. A slightly greater proportion of explantees tended to report both improved health status and high rates of heart attack and pacemaker implantation. The health status of these patients was, in general, considerably worse than previously reported among valve implant patients. Over half the cohort were hospitalized during follow up, and half were unable to walk up more than one flight of stairs without shortness of breath. CONCLUSION: The less than optimal health status of most BSCC patients and relatively high rates of morbidity should be taken into account when considering potential explantation of the valves.
+SP  - 210
+EP  - 218
+VL  - 10
+IS  - 2
+AN  - 11297208
+UR  - https://www.ncbi.nlm.nih.gov/pubmed/11297208
+U1  - 11297208[pmid]
+J2  - J Heart Valve Dis
+JF  - The Journal of heart valve disease
+KW  - Aged
+KW  - Cohort Studies
+KW  - Data Collection
+KW  - Female
+KW  - *Health Status
+KW  - Heart Valve Diseases/*surgery
+KW  - *Heart Valve Prosthesis
+KW  - Heart Valves/transplantation
+KW  - Humans
+KW  - Male
+KW  - Middle Aged
+KW  - *Prosthesis Failure
+KW  - *Quality of Life
+KW  - *Self Concept
+CY  - England
+ER  - 
+

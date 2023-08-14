@@ -1,0 +1,85 @@
+NUM_TABLES: 37
+#
+############################################################################
+#
+# Format:
+#
+# input_file|tablename|num_fields|fieldname1|...|N|fieldtype1|...|N|
+#
+#          E.g.: stopwords.txt|stpwrds|2|word|score|TXT|TXT
+# 
+# Field Types: 
+#     TXT  -- data you wish to be accessed as text (or floats)
+#     INT  -- data you wish to be accessed as integers
+# 
+# Maximum Number of Columns: 10
+# Maximum Filename Length: 30
+# Maximum Filename Length: 30
+# Maximum Fieldname Length: 20
+#
+# Key Field: Assumed to be the first column & currently must be type TXT
+#
+# Processing:
+#
+#   To Add Entries:
+#     1) Add line(s) @ bottom of file with your new table information
+#     2) Increment first line (NUM_TABLES) to reflect additions
+#     3) Run create_bulk from this directory
+#
+#   To Remove Entries:
+#     1) Remove line(s) from file as necessary
+#     2) Decrement first line (NUM_TABLES) to reflect deletions
+#     3) There is no need to rerun create_bulk
+#
+# SPECIAL NOTE: If you are only adding a few tables, add them here
+#   then copy the file over to config.tmp and remove all of the tables
+#   except what you want to add, change the NUM_TABLES to reflect the
+#   actual number to create, and then run create_bulk.  This eliminates
+#   the need to run through the ENTIRE file of table creations to add
+#   a single table.  You then specify {PATH}/config.tmp when prompted 
+#   from create_bulk for the config file location.
+#
+############################################################################
+#
+# Lan's Tables
+#
+#   MeSHTreeCode Tables
+mesh_mh_opt.txt|meshmh|2|mesh|mh|TXT|TXT
+mesh_tc_strict.txt|meshtcstrict|2|mesh|tc|TXT|TXT
+mesh_tc_relaxed.txt|meshtcrelaxed|2|mesh|tc|TXT|TXT
+meta_mesh_opt.txt|metamesh|2|meta|mesh|TXT|TXT
+meta_mesh_tc_opt.txt|metameshtc|3|meta|mesh|tc|TXT|TXT|TXT
+#   NLSAbbrAcros Tables
+nls_aa.txt|nlsaa|4|word|expansion|type|cat|TXT|TXT|TXT|TXT
+nls_aau.txt|nlsaau|4|word|expansion|type|cat|TXT|TXT|TXT|TXT
+#   Synonym Tables
+syns.txt|syns|4|word|wcat|syn|scat|TXT|TXT|TXT|TXT
+#   SAB Tables
+# sav_rv: root-to-versioned source names
+# sav_vr: versioned-to-root source names
+sab_rv.txt|sab_rv|4|root|versioned|level|exists|TXT|TXT|INT|INT
+sab_vr.txt|sab_vr|4|versioned|root|level|exists|TXT|TXT|INT|INT
+#   MetaWordIndex Tables -- all_words.txt and all the WIDE tables appear last!!
+all_words_counts.txt|all_words_counts|2|word|wcount|TXT|INT
+cui_concept.txt|cuiconcept|2|cui|concept|TXT|TXT
+concept_cui.txt|conceptcui|2|concept|cui|TXT|TXT
+concept_st.txt|conceptst|2|concept|st|TXT|TXT
+cui_st.txt|cuist|2|cui|st|TXT|TXT
+cui_src.txt|cuisrc|2|cui|src|TXT|TXT
+cui_sourceinfo.txt|cuisourceinfo|6|cui|sui|i|str|src|tty|TXT|TXT|INT|TXT|TXT|TXT
+first_words.txt|first_words|3|word|sui|cui|TXT|TXT|TXT
+first_words_counts.txt|first_words_counts|2|word|wcount|TXT|INT
+first_wordsb.txt|first_wordsb|3|word|sui|cui|TXT|TXT|TXT
+first_wordsb_counts.txt|first_wordsb_counts|2|word|wcount|TXT|INT
+first_words_of_one.txt|first_words_of_one|3|word|sui|cui|TXT|TXT|TXT
+first_words_of_two.txt|first_words_of_two|3|word|sui|cui|TXT|TXT|TXT
+sui_cui.txt|sui_cui|2|sui|cui|TXT|TXT
+sui_nmstr_str.txt|suistrings|3|sui|nmstr|str|TXT|TXT|TXT
+first_words_WIDE.txt|first_words_WIDE|4|word|nmstr|str|concept|TXT|TXT|TXT|TXT
+first_wordsb_WIDE.txt|first_wordsb_WIDE|4|word|nmstr|str|concept|TXT|TXT|TXT|TXT
+first_words_of_one_WIDE.txt|first_words_of_one_WIDE|4|word|nmstr|str|concept|TXT|TXT|TXT|TXT
+first_words_of_two_WIDE.txt|first_words_of_two_WIDE|4|word|nmstr|str|concept|TXT|TXT|TXT|TXT
+all_words.txt|all_words|3|word|sui|cui|TXT|TXT|TXT
+all_words_WIDE.txt|all_words_WIDE|4|word|nmstr|str|concept|TXT|TXT|TXT|TXT
+# De-normalized cui_srcs_sts table
+cui_srcs_sts.txt|cui_srcs_sts|3|cui|sources|semtypes|TXT|TXT|TXT

@@ -1,0 +1,149 @@
+text_objects:find_aas_1
+
+AAsInOut = node([
+   tok(uc,"PR","pr",pos(18,20)),
+   tok(pn,",",",",pos(20,21)),
+   tok(ws," "," ",pos(21,22)),
+   tok(lc,"n","n",pos(22,23)),
+   tok(ws," "," ",pos(23,24)),
+   tok(pn,"=","=",pos(24,25)),
+   tok(ws," "," ",pos(25,26)),
+   tok(nu,"5","5",pos(26,27))],
+   [[
+   tok(lc,"partial","partial",pos(0,7)),
+   tok(ws," "," ",pos(7,8)),
+   tok(lc,"response","response",pos(8,16))]],0,empty,empty)
+
+uc
+pn [,;]
+wc
+lc "n" 
+If there's a 
+   tok(pn,"=","=",pos(24,25))
+token, discard all tokens beginning with the first wc or [,;]?
+in store_aa, just before add_to_avl_once
+
+AATokens          = [
+tok(uc,"PR","pr",pos(18,20)),
+tok(pn,",",",",pos(20,21)),
+tok(ws," "," ",pos(21,22)),
+tok(lc,"n","n",pos(22,23)),
+tok(ws," "," ",pos(23,24)),
+tok(pn,"=","=",pos(24,25)),
+tok(ws," "," ",pos(25,26)),
+tok(nu,"5","5",pos(26,27))
+
+[tok(uc,"GM","gm",pos(50,52)),
+ tok(pn,"-","-",pos(52,53)),
+ tok(uc,"CSF","csf",pos(53,56)),
+ tok(pn,",",",",pos(56,57)),
+ tok(ws," "," ",pos(57,58)),
+ tok(lc,"n","n",pos(58,59)),
+ tok(pn,"=","=",pos(59,60)),
+ tok(nu,"8","8",pos(60,61))]
+
+[tok(pe,[],2,pos(19,23)),
+ tok(pn,"(","(",pos(19,20)),
+ tok(uc,"CR","cr",pos(20,22)),
+ tok(pn,")",")",pos(22,23))],
+
+****************************************************************
+
+BEFORE:
+AA|22571447|CR, n = 1|complete response|8|9|3|17|1050:9
+AA|22571447|PR, n = 5|partial response|8|9|3|16|1099:9
+AA|22571447|HI, n = 3|haematological improvement|8|9|3|26|1148:9
+
+AFTER:
+AA|22571447|CR|complete response|1|2|3|17|1050:2
+AA|22571447|PR|partial response|1|2|3|16|1099:2
+AA|22571447|HI|haematological improvement|1|2|3|26|1148:2
+
+
+****************************************************************
+
+
+<flang@indlx6vm> 7 : s -F -p -V NLM --debug 1
+
+UMLS=/nfsvol/nls/II_Group_WorkArea/umls
+
+2017AA testing: The SM.DB file in 
+$UMLS/metamorphosys2016AB/Install/2016AB/LEX/LEX_DB
+contains only 5,058 rows, but the SM.DB file in
+$UMLS/metamorphosys2017AA/Install/2017AA/LEX/LEX_DB
+contains 190,844 rows---over 37.73 times as many rows.
+This expansion led to a tremendous increase in the number of
+UMLS concepts identified when using options such as
+allow_overmatches (-o) and compute_all_mappings (-b).
+
+Test 1: Simply compare the binaries with the previous version of the data:
+METAMAP_PROD="metamap      -Z 2016AB -L 2016"
+METAMAP_TEST="metamap.FML  -Z 2016AB -L 2016"
+Major differences in --conj processing, as expected
+because of the new conjunction logic that creates a supermapping.
+No other differences of any significance.
+
+Test 2: Simply compare the binaries with the current version of the data:
+METAMAP_PROD="metamap      -Z 2017AA -L 2017"
+METAMAP_TEST="metamap.FML  -Z 2017AA -L 2017"
+Differences are identical. Conclusion is that metamap.FML is blessed.
+
+Test 3: Compare 2016AB with 2017AA with production MetaMap.
+METAMAP_PROD="metamap      -Z 2016AB -L 2016"
+METAMAP_TEST="metamap      -Z 2017AA -L 2017"
+Substantial differences in processing that casts a wide net,
+e.g., overmatches and compute_all_mappings.
+
+"breathed" now gets 13 mappings, whereas it used to get none.
+
+metamap -Z 2016AB
+avg of 5 runs = 139 seconds
+34997 variants
+62296 (-D)
+
+metamap.FML -Z 2016AB
+avg of 5 runs = 134 seconds
+34987 variants
+62296 (-D)
+
+metamap -Z 2017AA
+avg of 5 runs = 231 seconds
+99874 variants
+134088 (-D)
+
+metamap.FML -Z 2017AA
+avg of 5 runs = 226 seconds
+99864 variants
+134088 (-D)
+
+Now do # of rows in various vars*txt tables
+
+1.67 x slower
+2.85 x as many variants generated
+
+2.15 x as many variants (-D) generated 
+1.75 x slower (-D)
+
+****************************************************************
+
+This Test Suite has been built over the years where problems or questions had
+come up.  This Test Suite exercises several aspects of MetaMap and makes
+sure that the distributable version of MetaMap matches our internal version.
+
+
+runTest_2011.sh - Script for testing of metamap11.
+
+
+To run the Test Suite, simply update the METAMAP variable in the file to
+point to where your version of MetaMap is located and the run
+
+     ./runTest_2011.sh -T
+
+Or if your using COMAND.COM on Windows:
+
+     ./runTest_2011.bat -T
+
+You will see locator notes scroll on the screen as the Test Suite proceeds
+through it's set of tests.  At the end, the script does a "diff" of the
+"out" results file created by running this script and the "gold.2008" standard
+results file.  There should be no differences in the files.

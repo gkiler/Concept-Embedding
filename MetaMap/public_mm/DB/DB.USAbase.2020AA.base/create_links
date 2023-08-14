@@ -1,0 +1,80 @@
+#!/bin/sh
+# Establish links to the original database data files inorder to conserve 
+# disk space locally.
+
+PWD=`pwd`
+VERSION=`basename $PWD | cut -d"." -f2,3`
+DBA_DIR=$DBA/data.${VERSION}
+LEX_DIR=$MWI/data.${VERSION}/05Filter/05LexTables
+MWI_MODEL=model.`pwd | sed -e 's/.*\.//'`
+
+echo DBA_DIR: $DBA_DIR
+echo MWI_MODEL: $MWI_MODEL
+
+# Establish links to MetaWordIndex files
+
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/all_words.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/all_words_WIDE.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/all_words_counts.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/cui_concept.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/concept_cui.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/concept_st.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/cui_st.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/cui_src.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/cui_srcs_sts.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/cui_sourceinfo.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/first_words.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/first_words_WIDE.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/first_words_counts.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/first_wordsb.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/first_wordsb_WIDE.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/first_wordsb_counts.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/first_words_of_one.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/first_words_of_one_WIDE.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/first_words_of_two.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/first_words_of_two_WIDE.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/sui_cui.txt
+ln -s $DBA_DIR/MetaWordIndex/$MWI_MODEL/sui_nmstr_str.txt
+
+# Establish links to MeSHTreeCodes files
+
+ln -s $DBA_DIR/MeSHTreeCodes/mesh_mh_opt.txt
+ln -s $DBA_DIR/MeSHTreeCodes/mesh_tc_strict.txt
+ln -s $DBA_DIR/MeSHTreeCodes/mesh_tc_relaxed.txt
+ln -s $DBA_DIR/MeSHTreeCodes/meta_mesh_opt.txt
+ln -s $DBA_DIR/MeSHTreeCodes/meta_mesh_tc_opt.txt
+
+# Establish links to NLSAbbAcros files
+
+ln -s $DBA_DIR/NLSAbbrAcros/nls_aa.txt
+ln -s $DBA_DIR/NLSAbbrAcros/nls_aau.txt
+
+# Establish links to Synonyms files
+
+ln -s $DBA_DIR/Synonyms/syns.txt
+
+# Establish links to SAB files
+
+ln -s $DBA_DIR/SAB/sab_rv.txt
+ln -s $DBA_DIR/SAB/sab_vr.txt
+
+# Establish links to lexicon files
+
+ln -s $LEX_DIR/dm_vars.txt
+ln -s $LEX_DIR/im_vars.txt
+ln -s $LEX_DIR/lex_form.txt
+ln -s $LEX_DIR/lex_rec.txt
+ln -s $LEX_DIR/norm_prefix.txt
+ln -s $LEX_DIR/irreg_plural.txt
+
+# Establish links to Variants files
+
+ln -s $DBA_DIR/Variants/vars.txt
+ln -s $DBA_DIR/Variants/varsan.txt
+ln -s $DBA_DIR/Variants/varsanu.txt
+ln -s $DBA_DIR/Variants/varsu.txt
+
+# Establish links to SKR files
+
+# ln -s $DBA_DIR/SKR/tfidf.csb.txt
+# ln -s $DBA_DIR/SKR/tfidf.h.txt

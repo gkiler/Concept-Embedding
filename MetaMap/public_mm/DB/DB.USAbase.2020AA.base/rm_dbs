@@ -1,0 +1,65 @@
+#!/bin/csh
+# Remove DB database related files
+
+
+# Remove MetaWordIndex files
+
+/bin/rm -f all_words
+/bin/rm -f all_words_WIDE
+/bin/rm -f all_words_counts
+/bin/rm -f cuiconcept
+/bin/rm -f conceptcui
+/bin/rm -f conceptst
+/bin/rm -f cuist
+/bin/rm -f cuisrc
+/bin/rm -f cui_srcs_sts
+/bin/rm -f cuisourceinfo
+/bin/rm -f first_words
+/bin/rm -f first_words_WIDE
+/bin/rm -f first_words_counts
+/bin/rm -f first_wordsb
+/bin/rm -f first_wordsb_WIDE
+/bin/rm -f first_wordsb_counts
+/bin/rm -f first_words_of_one
+/bin/rm -f first_words_of_one_WIDE
+/bin/rm -f first_words_of_two
+/bin/rm -f first_words_of_two_WIDE
+/bin/rm -f sui_cui
+/bin/rm -f suistrings
+
+# Remove MeSHTreeCodes files
+
+/bin/rm -f meshmh
+/bin/rm -f meshtcstrict
+/bin/rm -f meshtcrelaxed
+/bin/rm -f metamesh
+/bin/rm -f metameshtc
+
+# Remove NLSAbbAcros files
+/bin/rm -f nlsaa
+/bin/rm -f nlsaau
+
+# Remove Synonyms files
+
+/bin/rm -f syns
+
+# Remove Variants files
+
+/bin/rm -f vars
+/bin/rm -f varsan
+/bin/rm -f varsanu
+/bin/rm -f varsu
+
+# Remove SAB files
+
+/bin/rm -f sab_rv
+/bin/rm -f sab_vr
+
+# Remove Lexicon files
+
+/bin/rm -f dm_vars
+/bin/rm -f im_vars
+/bin/rm -f lex_form
+/bin/rm -f lex_rec
+/bin/rm -f norm_prefix
+
